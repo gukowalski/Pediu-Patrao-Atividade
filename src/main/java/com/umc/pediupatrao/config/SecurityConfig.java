@@ -44,8 +44,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // CSRF habilitado (padrão do Spring Security): a autenticação é por cookie de sessão,
+        // então telas e APIs precisam enviar o token em POST/PUT/DELETE
         http
-                .csrf(csrf -> csrf.disable()) // Desativa CSRF para REST APIs
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/css/**", "/dist/**", "/plugins/**", "/js/**", "/images/**").permitAll()
                         .requestMatchers("/api/usuarios").permitAll()
