@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,18 +21,21 @@ public class ProdutoController {
         return produtoService.listarProdutos();
     }
 
+    @PreAuthorize("hasRole('ROLE_GERENTE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluirProduto(@PathVariable String id) {
         produtoService.excluir(id);
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('ROLE_GERENTE')")
     @PostMapping
     public ResponseEntity<Produto> salvarProduto(@RequestBody Produto produto) {
         Produto salvo = produtoService.salvar(produto);
         return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
     }
 
+    @PreAuthorize("hasRole('ROLE_GERENTE')")
     @PutMapping("/{id}")
     public ResponseEntity<Produto> atualizarProduto(@PathVariable String id, @RequestBody Produto produto) {
         produto.setId(id);

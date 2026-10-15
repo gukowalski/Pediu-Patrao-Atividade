@@ -30,7 +30,12 @@ public class PedidoMapper {
                 pedido.getValorTotal(),
                 pedido.getStatus(),
                 pedido.getRegistradoPor(),
-                pedido.getDataHoraEntrada());
+                pedido.getDataHoraEntrada(),
+                pedido.getResponsavelSaida(),
+                pedido.getDataHoraSaida(),
+                pedido.getCanceladoPor(),
+                pedido.getDataHoraCancelamento(),
+                pedido.getJustificativaCancelamento());
     }
 
     public static ItemPedidoDTO itemToDto(ItemPedido item) {

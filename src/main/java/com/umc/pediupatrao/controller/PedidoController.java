@@ -1,8 +1,10 @@
 package com.umc.pediupatrao.controller;
 
+import com.umc.pediupatrao.dto.AlterarStatusDTO;
+import com.umc.pediupatrao.dto.CancelarPedidoDTO;
+import com.umc.pediupatrao.dto.DescontoPedidoDTO;
 import com.umc.pediupatrao.dto.InsertPedidoDTO;
 import com.umc.pediupatrao.dto.PedidoDTO;
-import com.umc.pediupatrao.entity.Pedido;
 import com.umc.pediupatrao.service.PedidoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +47,24 @@ public class PedidoController {
         return ResponseEntity.ok(result);
     }
 
-    @PutMapping("/{id}/status")
-    public Pedido atualizarStatus(@PathVariable String id, @RequestParam String status) {
-        return pedidoService.atualizarStatus(id, status);
+    @PreAuthorize("hasAnyRole('ROLE_GERENTE', 'ROLE_ATENDENTE')")
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<PedidoDTO> avancarStatus(@PathVariable String id, @Valid @RequestBody AlterarStatusDTO dto) {
+        PedidoDTO result = pedidoService.avancarStatus(id, dto.getNovoStatus());
+        return ResponseEntity.ok(result);
     }
-    
-    
+
+    @PreAuthorize("hasRole('ROLE_GERENTE')")
+    @PostMapping("/{id}/cancelar")
+    public ResponseEntity<PedidoDTO> cancelar(@PathVariable String id, @Valid @RequestBody CancelarPedidoDTO dto) {
+        PedidoDTO result = pedidoService.cancelar(id, dto.getJustificativa());
+        return ResponseEntity.ok(result);
+    }
+
+    @PreAuthorize("hasRole('ROLE_GERENTE')")
+    @PostMapping("/{id}/desconto")
+    public ResponseEntity<PedidoDTO> aplicarDesconto(@PathVariable String id, @Valid @RequestBody DescontoPedidoDTO dto) {
+        PedidoDTO result = pedidoService.aplicarDesconto(id, dto.getPercentual());
+        return ResponseEntity.ok(result);
+    }
 }

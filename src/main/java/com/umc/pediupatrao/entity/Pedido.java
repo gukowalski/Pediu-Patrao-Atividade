@@ -39,4 +39,11 @@ public class Pedido {
     // Entrada do pedido (preenchidos pelo servidor)
     private String registradoPor;           // Username do usuário autenticado
     private LocalDateTime dataHoraEntrada;
+
+    private String responsavelSaida;
+    private LocalDateTime dataHoraSaida;
+
+    private String canceladoPor;
+    private LocalDateTime dataHoraCancelamento;
+    private String justificativaCancelamento;
 }

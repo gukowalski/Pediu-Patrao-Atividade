@@ -1,5 +1,6 @@
 package com.umc.pediupatrao.exception.handler;
 
+import com.umc.pediupatrao.exception.ConflictException;
 import com.umc.pediupatrao.exception.RegraNegocioException;
 import com.umc.pediupatrao.exception.ResourceNotFoundException;
 import com.umc.pediupatrao.exception.dto.StandardError;
@@ -24,6 +25,11 @@ public class ApiExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<StandardError> handleNotFound(ResourceNotFoundException e, HttpServletRequest request) {
         return buildStandardResponse(HttpStatus.NOT_FOUND, e.getMessage(), request);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<StandardError> handleConflict(ConflictException e, HttpServletRequest request) {
+        return buildStandardResponse(HttpStatus.CONFLICT, e.getMessage(), request);
     }
 
     // Perfil sem permissão para a operação (@PreAuthorize)

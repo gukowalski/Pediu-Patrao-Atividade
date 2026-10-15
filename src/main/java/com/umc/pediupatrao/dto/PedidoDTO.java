@@ -20,6 +20,11 @@ public class PedidoDTO {
     private StatusPedido status;
     private String registradoPor;
     private LocalDateTime dataHoraEntrada;
+    private String responsavelSaida;
+    private LocalDateTime dataHoraSaida;
+    private String canceladoPor;
+    private LocalDateTime dataHoraCancelamento;
+    private String justificativaCancelamento;
 
     public PedidoDTO() {
 
@@ -28,7 +33,9 @@ public class PedidoDTO {
     public PedidoDTO(String id, String clienteId, TipoAtendimento tipoAtendimento, List<ItemPedidoDTO> itens,
                      String observacao, BigDecimal subtotal, BigDecimal descontoPercentual,
                      BigDecimal valorDesconto, BigDecimal valorTotal, StatusPedido status,
-                     String registradoPor, LocalDateTime dataHoraEntrada) {
+                     String registradoPor, LocalDateTime dataHoraEntrada,
+                     String responsavelSaida, LocalDateTime dataHoraSaida, String canceladoPor,
+                     LocalDateTime dataHoraCancelamento, String justificativaCancelamento) {
         this.id = id;
         this.clienteId = clienteId;
         this.tipoAtendimento = tipoAtendimento;
@@ -41,6 +48,11 @@ public class PedidoDTO {
         this.status = status;
         this.registradoPor = registradoPor;
         this.dataHoraEntrada = dataHoraEntrada;
+        this.responsavelSaida = responsavelSaida;
+        this.dataHoraSaida = dataHoraSaida;
+        this.canceladoPor = canceladoPor;
+        this.dataHoraCancelamento = dataHoraCancelamento;
+        this.justificativaCancelamento = justificativaCancelamento;
     }
 
     public String getId() {
@@ -89,5 +101,25 @@ public class PedidoDTO {
 
     public LocalDateTime getDataHoraEntrada() {
         return dataHoraEntrada;
+    }
+
+    public String getResponsavelSaida() {
+        return responsavelSaida;
+    }
+
+    public LocalDateTime getDataHoraSaida() {
+        return dataHoraSaida;
+    }
+
+    public String getCanceladoPor() {
+        return canceladoPor;
+    }
+
+    public LocalDateTime getDataHoraCancelamento() {
+        return dataHoraCancelamento;
+    }
+
+    public String getJustificativaCancelamento() {
+        return justificativaCancelamento;
     }
 }

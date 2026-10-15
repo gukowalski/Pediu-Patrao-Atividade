@@ -6,6 +6,10 @@ import com.umc.pediupatrao.entity.Cliente;
 import com.umc.pediupatrao.dto.PedidoDTO;
 import com.umc.pediupatrao.entity.Produto;
 import com.umc.pediupatrao.entity.Usuario;
+import com.umc.pediupatrao.exception.ConflictException;
+import com.umc.pediupatrao.exception.RegraNegocioException;
+import com.umc.pediupatrao.exception.ResourceNotFoundException;
+import com.umc.pediupatrao.service.AuditoriaService;
 import com.umc.pediupatrao.service.ClienteService;
 import com.umc.pediupatrao.service.PedidoService;
 import com.umc.pediupatrao.service.ProdutoService;
@@ -36,6 +40,9 @@ public class HomeController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private AuditoriaService auditoriaService;
 
     @GetMapping("/login")
     public String login() {
@@ -87,8 +94,12 @@ public class HomeController {
     @PostMapping("/usuarios/salvar")
     public String salvarUsuario(@ModelAttribute Usuario usuario,
             RedirectAttributes redirectAttributes) {
-        usuarioService.salvarUsuario(usuario);
-        redirectAttributes.addFlashAttribute("sucesso", "Usuário criado com sucesso!");
+        try {
+            usuarioService.salvarUsuario(usuario);
+            redirectAttributes.addFlashAttribute("sucesso", "Usuário criado com sucesso!");
+        } catch (RegraNegocioException | ConflictException e) {
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+        }
         return "redirect:/usuarios";
     }
 
@@ -96,16 +107,24 @@ public class HomeController {
     public String atualizarUsuario(@PathVariable String id,
             @ModelAttribute Usuario usuario,
             RedirectAttributes redirectAttributes) {
-        usuarioService.atualizarUsuario(id, usuario);
-        redirectAttributes.addFlashAttribute("sucesso", "Usuário atualizado com sucesso!");
+        try {
+            usuarioService.atualizarUsuario(id, usuario);
+            redirectAttributes.addFlashAttribute("sucesso", "Usuário atualizado com sucesso!");
+        } catch (RegraNegocioException | ConflictException | ResourceNotFoundException e) {
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+        }
         return "redirect:/usuarios";
     }
 
     @PostMapping("/usuarios/deletar/{id}")
     public String deletarUsuario(@PathVariable String id,
             RedirectAttributes redirectAttributes) {
-        usuarioService.deletarUsuario(id);
-        redirectAttributes.addFlashAttribute("sucesso", "Usuário removido com sucesso!");
+        try {
+            usuarioService.deletarUsuario(id);
+            redirectAttributes.addFlashAttribute("sucesso", "Usuário removido com sucesso!");
+        } catch (RegraNegocioException | ResourceNotFoundException e) {
+            redirectAttributes.addFlashAttribute("erro", e.getMessage());
+        }
         return "redirect:/usuarios";
     }
 
@@ -185,6 +204,13 @@ public class HomeController {
         clienteService.salvar(cliente);
         redirectAttributes.addFlashAttribute("sucesso", "Cliente atualizado com sucesso!");
         return "redirect:/clientes";
+    }
+
+    @GetMapping("/auditoria")
+    public String auditoria(Model model) {
+        model.addAttribute("registros", auditoriaService.listar());
+        model.addAttribute("content", "auditoria/lista :: content");
+        return "layout";
     }
 
     // ========================

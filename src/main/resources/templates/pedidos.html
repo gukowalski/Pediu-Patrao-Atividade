@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Lista de Pedidos</title>
 </head>
@@ -11,6 +11,49 @@
         <h2 class="fw-bold mb-0">
             <i class="bi bi-bag me-2 text-primary"></i>Pedidos
         </h2>
+        <button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#novoPedido"
+                sec:authorize="hasAnyRole('GERENTE', 'ATENDENTE')">
+            <i class="bi bi-plus-lg me-1"></i> Novo Pedido
+        </button>
+    </div>
+
+    <div class="collapse mb-4" id="novoPedido" sec:authorize="hasAnyRole('GERENTE', 'ATENDENTE')">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form id="pedidoForm">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label for="clienteId" class="form-label fw-medium">Cliente</label>
+                            <select id="clienteId" class="form-select" required>
+                                <option value="" disabled selected>Selecione o cliente</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="tipoAtendimento" class="form-label fw-medium">Atendimento</label>
+                            <select id="tipoAtendimento" class="form-select" required>
+                                <option value="ENTREGA">Entrega</option>
+                                <option value="RETIRADA">Retirada</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <label class="form-label fw-medium">Itens</label>
+                    <div id="itens"></div>
+                    <button type="button" class="btn btn-sm btn-outline-secondary mb-3" onclick="adicionarItem()">
+                        <i class="bi bi-plus"></i> Adicionar item
+                    </button>
+
+                    <div class="mb-3">
+                        <label for="observacao" class="form-label fw-medium">Observação</label>
+                        <input type="text" id="observacao" class="form-control" maxlength="500">
+                    </div>
+
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-lg me-1"></i> Registrar Pedido
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <!-- Mensagens de feedback -->
@@ -38,12 +81,13 @@
                         <th class="text-end">Total</th>
                         <th>Registrado por</th>
                         <th>Status</th>
+                        <th class="text-end pe-4">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Lista vazia -->
                     <tr th:if="${#lists.isEmpty(pedidos)}">
-                        <td colspan="7" class="text-center text-muted py-5">
+                        <td colspan="8" class="text-center text-muted py-5">
                             <i class="bi bi-inbox fs-3 d-block mb-2"></i>
                             Nenhum pedido encontrado.
                         </td>
@@ -73,6 +117,29 @@
                                                   (${pedido.status?.name() == 'EM_PREPARACAO'} ? 'bg-warning text-dark' : 'bg-secondary'))"
                                   th:text="${pedido.status?.descricao} ?: '-'">
                             </span>
+                            <small class="d-block text-muted" th:if="${pedido.dataHoraSaida != null}"
+                                   th:text="${'Saída: ' + #temporals.format(pedido.dataHoraSaida, 'dd/MM HH:mm') + ' por ' + pedido.responsavelSaida}"></small>
+                            <small class="d-block text-muted" th:if="${pedido.canceladoPor != null}"
+                                   th:text="${'Cancelado por ' + pedido.canceladoPor + ': ' + pedido.justificativaCancelamento}"></small>
+                        </td>
+                        <td class="text-end pe-4 text-nowrap">
+                            <th:block th:if="${pedido.status != null}" sec:authorize="hasAnyRole('GERENTE', 'ATENDENTE')">
+                                <button th:each="proximo : ${pedido.status.proximosPermitidos(pedido.tipoAtendimento)}"
+                                        class="btn btn-sm btn-outline-primary me-1"
+                                        th:data-id="${pedido.id}" th:data-status="${proximo}"
+                                        onclick="avancarStatus(this.dataset.id, this.dataset.status)"
+                                        th:text="${proximo.descricao}"></button>
+                            </th:block>
+                            <th:block th:if="${pedido.status != null and pedido.status.antesDaSaida}" sec:authorize="hasRole('GERENTE')">
+                                <button class="btn btn-sm btn-outline-warning me-1" th:data-id="${pedido.id}"
+                                        onclick="aplicarDesconto(this.dataset.id)">
+                                    <i class="bi bi-percent"></i> Desconto
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" th:data-id="${pedido.id}"
+                                        onclick="cancelarPedido(this.dataset.id)">
+                                    <i class="bi bi-x-circle"></i> Cancelar
+                                </button>
+                            </th:block>
                         </td>
                     </tr>
                 </tbody>
@@ -82,6 +149,102 @@
             Total: <strong th:text="${#lists.size(pedidos)}"></strong> pedido(s)
         </div>
     </div>
+
+    <script>
+        const API_PEDIDOS = '/api/pedidos';
+        let produtosAtivos = [];
+
+        function csrfHeaders() {
+            const header = document.querySelector('meta[name="_csrf_header"]').content;
+            const token = document.querySelector('meta[name="_csrf"]').content;
+            return { 'Content-Type': 'application/json', [header]: token };
+        }
+
+        async function enviar(url, method, body) {
+            const response = await fetch(url, { method, headers: csrfHeaders(), body: JSON.stringify(body) });
+            if (response.ok) {
+                location.reload();
+                return;
+            }
+            const erro = await response.json().catch(() => ({}));
+            const detalhes = (erro.errors || []).map(e => e.message).join('\n');
+            alert(detalhes || erro.message || 'Erro ao processar a operação (' + response.status + ')');
+        }
+
+        function avancarStatus(id, novoStatus) {
+            enviar(`${API_PEDIDOS}/${id}/status`, 'PATCH', { novoStatus });
+        }
+
+        function aplicarDesconto(id) {
+            const percentual = prompt('Percentual de desconto (máximo 20%):');
+            if (percentual !== null) {
+                enviar(`${API_PEDIDOS}/${id}/desconto`, 'POST', { percentual: percentual.replace(',', '.') });
+            }
+        }
+
+        function cancelarPedido(id) {
+            const justificativa = prompt('Justificativa do cancelamento (mínimo 10 caracteres):');
+            if (justificativa !== null) {
+                enviar(`${API_PEDIDOS}/${id}/cancelar`, 'POST', { justificativa });
+            }
+        }
+
+        function adicionarItem() {
+            const linha = document.createElement('div');
+            linha.className = 'row g-2 mb-2 item-pedido';
+            linha.innerHTML = `
+                <div class="col-8"><select class="form-select produto" required></select></div>
+                <div class="col-3"><input type="number" class="form-control quantidade" min="1" max="50" value="1" required></div>
+                <div class="col-1"><button type="button" class="btn btn-outline-danger w-100" onclick="this.closest('.item-pedido').remove()">
+                    <i class="bi bi-trash"></i></button></div>`;
+            const select = linha.querySelector('.produto');
+            produtosAtivos.forEach(p => {
+                const option = document.createElement('option');
+                option.value = p.id;
+                option.textContent = `${p.nome} - R$ ${Number(p.preco).toFixed(2)}`;
+                select.appendChild(option);
+            });
+            document.getElementById('itens').appendChild(linha);
+        }
+
+        async function carregarFormulario() {
+            const form = document.getElementById('pedidoForm');
+            if (!form) {
+                return;
+            }
+
+            const [clientes, produtos] = await Promise.all([
+                fetch('/api/clientes').then(r => r.ok ? r.json() : []),
+                fetch('/api/produtos').then(r => r.ok ? r.json() : [])
+            ]);
+            produtosAtivos = produtos.filter(p => p.ativo);
+
+            const selectCliente = document.getElementById('clienteId');
+            clientes.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c.id;
+                option.textContent = c.nome;
+                selectCliente.appendChild(option);
+            });
+            adicionarItem();
+
+            form.addEventListener('submit', event => {
+                event.preventDefault();
+                const itens = [...document.querySelectorAll('.item-pedido')].map(linha => ({
+                    produtoId: linha.querySelector('.produto').value,
+                    quantidade: Number(linha.querySelector('.quantidade').value)
+                }));
+                enviar(API_PEDIDOS, 'POST', {
+                    clienteId: selectCliente.value,
+                    tipoAtendimento: document.getElementById('tipoAtendimento').value,
+                    itens,
+                    observacao: document.getElementById('observacao').value
+                });
+            });
+        }
+
+        carregarFormulario();
+    </script>
 
 </div>
 
