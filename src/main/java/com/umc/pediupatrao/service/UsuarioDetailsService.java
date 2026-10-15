@@ -18,11 +18,13 @@ public class UsuarioDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // Usuário sem perfil não autentica (ex.: documentos antigos com role "USER")
         return usuarioRepository.findByUsername(username)
+                .filter(usuario -> usuario.getRole() != null)
                 .map(usuario -> User.builder()
                         .username(usuario.getUsername())
                         .password(usuario.getPassword())
-                        .roles("USER") // Adicione roles conforme necessário
+                        .roles(usuario.getRole().name())
                         .build())
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
     }

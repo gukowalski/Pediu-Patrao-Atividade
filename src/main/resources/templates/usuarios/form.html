@@ -66,8 +66,9 @@
                     </label>
                     <select id="role" class="form-select" th:field="*{role}" required>
                         <option value="" disabled>Selecione um perfil</option>
-                        <option value="ADMIN">ADMIN</option>
-                        <option value="USER">USER</option>
+                        <option th:each="p : ${T(com.umc.pediupatrao.entity.Role).values()}"
+                                th:value="${p}"
+                                th:text="${p.descricao}"></option>
                     </select>
                 </div>
 
