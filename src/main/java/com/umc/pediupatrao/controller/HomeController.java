@@ -3,7 +3,7 @@ package com.umc.pediupatrao.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.umc.pediupatrao.entity.Cliente;
-import com.umc.pediupatrao.entity.Pedido;
+import com.umc.pediupatrao.dto.PedidoDTO;
 import com.umc.pediupatrao.entity.Produto;
 import com.umc.pediupatrao.entity.Usuario;
 import com.umc.pediupatrao.service.ClienteService;
@@ -114,7 +114,7 @@ public class HomeController {
     // ========================
     @GetMapping("/pedidos")
     public String pedidos(Model model) {
-        List<Pedido> pedidos = pedidoService.listarPedidos();
+        List<PedidoDTO> pedidos = pedidoService.listarPedidos();
         model.addAttribute("pedidos", pedidos);
         model.addAttribute("content", "pedidos :: content");
         log.info("Carregando fragmento: pedidos :: content");

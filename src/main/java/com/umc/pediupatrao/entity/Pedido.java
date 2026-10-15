@@ -1,67 +1,42 @@
 package com.umc.pediupatrao.entity;
 
-import jakarta.persistence.Entity;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Document(collection = "pedidos")
-@Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Pedido {
+
     @Id
     private String id;
     private String clienteId;
-    private String tipoPizza;
-    private String status;
-    private int quantidade;
-    private String sabor;
+    private TipoAtendimento tipoAtendimento;
+    private List<ItemPedido> itens = new ArrayList<>();
+    private String observacao;
 
-    public String getId() {
-        return id;
-    }
+    // Valores calculados no servidor (PedidoService) — nunca aceitos da requisição
+    @Field(targetType = FieldType.DECIMAL128)
+    private BigDecimal subtotal;            // Soma dos subtotais dos itens
+    @Field(targetType = FieldType.DECIMAL128)
+    private BigDecimal descontoPercentual;  // 0 a 20 (aplicado pelo GERENTE)
+    @Field(targetType = FieldType.DECIMAL128)
+    private BigDecimal valorDesconto;
+    @Field(targetType = FieldType.DECIMAL128)
+    private BigDecimal valorTotal;          // subtotal - valorDesconto
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    private StatusPedido status;
 
-    public String getClienteId() {
-        return clienteId;
-    }
-
-    public void setClienteId(String clienteId) {
-        this.clienteId = clienteId;
-    }
-
-    public String getTipoPizza() {
-        return tipoPizza;
-    }
-
-    public void setTipoPizza(String tipoPizza) {
-        this.tipoPizza = tipoPizza;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public int getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(int quantidade) {
-        this.quantidade = quantidade;
-    }
-
-    public String getSabor() {
-        return sabor;
-    }
-
-    public void setSabor(String sabor) {
-        this.sabor = sabor;
-    }
-    
-    
+    // Entrada do pedido (preenchidos pelo servidor)
+    private String registradoPor;           // Username do usuário autenticado
+    private LocalDateTime dataHoraEntrada;
 }
