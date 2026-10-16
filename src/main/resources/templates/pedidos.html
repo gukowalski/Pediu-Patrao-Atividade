@@ -122,7 +122,8 @@
                             <small class="d-block text-muted" th:if="${pedido.canceladoPor != null}"
                                    th:text="${'Cancelado por ' + pedido.canceladoPor + ': ' + pedido.justificativaCancelamento}"></small>
                         </td>
-                        <td class="text-end pe-4 text-nowrap">
+                        <td class="pe-4">
+                            <div class="d-grid gap-1">
                             <th:block th:if="${pedido.status != null}" sec:authorize="hasAnyRole('GERENTE', 'ATENDENTE')">
                                 <button th:each="proximo : ${pedido.status.proximosPermitidos(pedido.tipoAtendimento)}"
                                         class="btn btn-sm btn-outline-primary me-1"
@@ -140,6 +141,7 @@
                                     <i class="bi bi-x-circle"></i> Cancelar
                                 </button>
                             </th:block>
+                            </div>
                         </td>
                     </tr>
                 </tbody>

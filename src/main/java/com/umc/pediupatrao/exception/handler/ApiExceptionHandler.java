@@ -1,11 +1,14 @@
 package com.umc.pediupatrao.exception.handler;
 
+import com.umc.pediupatrao.config.SecurityConfig;
 import com.umc.pediupatrao.exception.ConflictException;
 import com.umc.pediupatrao.exception.RegraNegocioException;
 import com.umc.pediupatrao.exception.ResourceNotFoundException;
 import com.umc.pediupatrao.exception.dto.StandardError;
 import com.umc.pediupatrao.exception.dto.ValidationError;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -17,10 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 // Restrito aos @RestController para não transformar em JSON os erros das telas Thymeleaf
 @RestControllerAdvice(annotations = RestController.class)
 public class ApiExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(ApiExceptionHandler.class);
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<StandardError> handleNotFound(ResourceNotFoundException e, HttpServletRequest request) {
@@ -55,7 +61,20 @@ public class ApiExceptionHandler {
         return buildValidationResponse(status, e, request);
     }
 
+    private void registrarLog(HttpStatus status, String message, HttpServletRequest request) {
+        String tipo = switch (status) {
+            case FORBIDDEN -> "BLOQUEADO";
+            case CONFLICT -> "CONFLITO";
+            case NOT_FOUND -> "NAO ENCONTRADO";
+            case UNPROCESSABLE_ENTITY -> "VALIDACAO";
+            default -> "REGRA";
+        };
+        log.warn("[{} {}] {} {} {} -> {}", status.value(), tipo, SecurityConfig.usuarioLogado(),
+                request.getMethod(), request.getRequestURI(), message);
+    }
+
     private ResponseEntity<StandardError> buildStandardResponse(HttpStatus status, String message, HttpServletRequest request) {
+        registrarLog(status, message, request);
         StandardError error = new StandardError(
                 Instant.now(),
                 status.value(),
@@ -77,6 +96,9 @@ public class ApiExceptionHandler {
         for (FieldError f : e.getBindingResult().getFieldErrors()) {
             err.addError(f.getField(), f.getDefaultMessage());
         }
+        registrarLog(status, e.getBindingResult().getFieldErrors().stream()
+                .map(f -> f.getField() + ": " + f.getDefaultMessage())
+                .collect(Collectors.joining("; ")), request);
 
         return ResponseEntity.status(status).body(err);
     }
