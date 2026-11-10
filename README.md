@@ -9,6 +9,8 @@ cancelamentos e descontos exclusivos do gerente e auditoria persistente no Mongo
 > **Dashboard Administrativo** (atividade seguinte): indicadores de vendas, gráficos, situação dos pedidos,
 > produtos mais vendidos e filtros, alimentados pela API `GET /api/dashboard/**` (perfis ADMIN e GERENTE).
 > Requisitos, documentação dos endpoints e evidências de testes em **[docs/DASHBOARD.md](docs/DASHBOARD.md)**.
+>
+> 🎥 **Vídeo de apresentação:** [assistir no Google Drive](https://drive.google.com/file/d/1IVK95KdtVgejDCUrBJMFmuWblC3ZSMUw/view?usp=sharing)
 
 ## Como executar
 
