@@ -18,8 +18,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 // Restrito aos @RestController para não transformar em JSON os erros das telas Thymeleaf
@@ -53,6 +56,19 @@ public class ApiExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<StandardError> handleNotReadable(HttpMessageNotReadableException e, HttpServletRequest request) {
         return buildStandardResponse(HttpStatus.BAD_REQUEST, "Corpo da requisição inválido", request);
+    }
+
+    // Parâmetro de consulta com formato inválido (ex.: dataInicio=31/12/2026 ou status=ENTREGUE)
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<StandardError> handleTypeMismatch(MethodArgumentTypeMismatchException e, HttpServletRequest request) {
+        String mensagem = "Valor inválido para o parâmetro '" + e.getName() + "': " + e.getValue();
+        Class<?> tipo = e.getRequiredType();
+        if (tipo != null && tipo.isEnum()) {
+            mensagem += ". Valores aceitos: " + Arrays.toString(tipo.getEnumConstants());
+        } else if (LocalDate.class.equals(tipo)) {
+            mensagem += ". Use o formato yyyy-MM-dd";
+        }
+        return buildStandardResponse(HttpStatus.BAD_REQUEST, mensagem, request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

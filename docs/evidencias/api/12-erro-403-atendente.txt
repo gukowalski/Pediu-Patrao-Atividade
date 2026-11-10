@@ -1,0 +1,3 @@
+GET /api/dashboard/resumo   (usuário: atendente01)
+{"timestamp":"2026-11-10T02:29:03.372688500Z","status":403,"error":"Error","message":"Acesso negado para o seu perfil","path":"/api/dashboard/resumo"}
+HTTP 403

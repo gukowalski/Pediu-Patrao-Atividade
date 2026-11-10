@@ -1,0 +1,82 @@
+Execução: ./mvnw test  —  09/11/2026 23:26  —  Java 21 (Temurin), Spring Boot 3.4.4
+
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.190 s -- in com.umc.pediupatrao.controller.AutorizacaoApiTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.733 s -- in com.umc.pediupatrao.controller.DashboardApiTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.019 s -- in com.umc.pediupatrao.entity.StatusPedidoTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.189 s -- in com.umc.pediupatrao.service.ClienteServiceTest
+Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.160 s -- in com.umc.pediupatrao.service.DashboardServiceTest
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.107 s -- in com.umc.pediupatrao.service.PedidoServiceTest
+Tests run: 58, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
+
+Casos de teste executados (target/surefire-reports):
+
+[controller.AutorizacaoApiTest]
+  OK  listagemDeUsuariosNaoExpoeSenha (0.297 s)
+  OK  atendenteNaoPodeListarUsuarios (0.026 s)
+  OK  auditoriaNaoPodeSerExcluida (0.02 s)
+  OK  requisicaoSemTokenCsrfRetorna403 (0.008 s)
+  OK  gerentePodeCancelarPedido (0.145 s)
+  OK  atendenteNaoPodeCancelarPedido (0.017 s)
+  OK  adminNaoPodeAplicarDesconto (0.027 s)
+  OK  descontoAcimaDoLimiteRetorna422 (0.025 s)
+  OK  apiSemLoginRetorna401 (0.011 s)
+  OK  adminNaoPodeCancelarPedido (0.009 s)
+  OK  atendenteNaoPodeConsultarAuditoria (0.008 s)
+  OK  gerenteNaoPodeCriarUsuario (0.015 s)
+
+[controller.DashboardApiTest]
+  OK  gerenteConsultaResumo (0.045 s)
+  OK  periodoInvalidoRetorna400 (0.02 s)
+  OK  enumInvalidoRetorna400ComValoresAceitos (0.019 s)
+  OK  dataEmFormatoInvalidoRetorna400 (0.01 s)
+  OK  adminConsultaRankingComParametrosPadrao (0.021 s)
+  OK  atendenteNaoAcessaODashboard (0.01 s)
+  OK  limiteInvalidoRetorna400 (0.015 s)
+  OK  semLoginRetorna401 (0.006 s)
+
+[entity.StatusPedidoTest]
+  OK  prontoParaRetiradaSoPodeIrParaRetirado (0.014 s)
+  OK  estadosFinaisNaoTemProximoStatus (0.002 s)
+  OK  cancelamentoEDescontoSomenteAntesDaSaida (0.001 s)
+  OK  fluxoCompletoDeEntrega (0.0 s)
+  OK  cancelamentoNaoFazParteDoFluxoNormal (0.0 s)
+  OK  naoPermiteFinalizarPedidoEmPreparacao (0.0 s)
+
+[service.ClienteServiceTest]
+  OK  alteracaoDeEnderecoGeraAuditoria (0.18 s)
+  OK  comparaSomenteOsCamposAlterados (0.003 s)
+  OK  alteracaoSemMudancasNaoGeraAuditoria (0.002 s)
+
+[service.DashboardServiceTest]
+  OK  limiteForaDoIntervaloEhRejeitado (0.097 s)
+  OK  filtroRejeitaDataInicialPosteriorAFinal (0.002 s)
+  OK  resumoSemPedidosRetornaZerosSemErro (0.007 s)
+  OK  rankingComFiltroDeCategoriaConsideraSoOsItensDaCategoria (0.006 s)
+  OK  filtroRejeitaPeriodoMaiorQue366Dias (0.002 s)
+  OK  pedidosRecentesOrdenadosEComAtraso (0.006 s)
+  OK  distribuicaoPorHoraEDiaDaSemana (0.005 s)
+  OK  vendasPorTipoAtendimentoSempreTrazEntregaERetirada (0.003 s)
+  OK  evolucaoSemanalAgrupaPelaSegundaFeira (0.003 s)
+  OK  evolucaoDiariaPreencheDiasSemVenda (0.002 s)
+  OK  variacaoPercentual (0.001 s)
+  OK  filtroPadraoSaoOsUltimos30DiasAteHoje (0.001 s)
+  OK  rankingPorQuantidadeEPorFaturamento (0.003 s)
+  OK  comparativoSemHistoricoSuficienteNaoCalculaVariacao (0.004 s)
+  OK  vendasPorCategoriaUsaCategoriaDoItemOuDoCadastro (0.005 s)
+  OK  statusTrazTodosOsStatusComPercentual (0.004 s)
+  OK  periodoAnteriorTemAMesmaDuracao (0.001 s)
+  OK  resumoIgnoraCanceladosNoFaturamentoECalculaIndicadores (0.002 s)
+  OK  resumoToleraPedidosComDadosIncompletos (0.002 s)
+
+[service.PedidoServiceTest]
+  OK  criarPedidoCalculaTotalComPrecoDoProduto (0.075 s)
+  OK  descontoRecalculaTotalNoServidor (0.003 s)
+  OK  pedidoCanceladoNaoPodeMudarDeStatus (0.003 s)
+  OK  criarPedidoComProdutoInativoLancaExcecao (0.003 s)
+  OK  descontoAcimaDeVintePorCentoLancaExcecao (0.003 s)
+  OK  saidaParaEntregaRegistraResponsavelEDataHora (0.004 s)
+  OK  cancelamentoPreservaValoresERegistraJustificativa (0.003 s)
+  OK  descontoAposSaidaLancaConflito (0.003 s)
+  OK  cancelamentoAposSaidaLancaConflito (0.003 s)
+  OK  transicaoInvalidaLancaConflito (0.004 s)
