@@ -20,4 +20,10 @@ public class ItemPedido {
     private int quantidade;
     @Field(targetType = FieldType.DECIMAL128)
     private BigDecimal subtotal;      // precoUnitario x quantidade
+    private String categoria;         // Cópia do tipo do Produto (Pizza, Bebida...) usada no dashboard
+
+    public ItemPedido(String produtoId, String nomeProduto, BigDecimal precoUnitario, int quantidade,
+                      BigDecimal subtotal) {
+        this(produtoId, nomeProduto, precoUnitario, quantidade, subtotal, null);
+    }
 }

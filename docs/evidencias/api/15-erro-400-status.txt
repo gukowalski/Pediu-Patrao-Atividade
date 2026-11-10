@@ -1,0 +1,3 @@
+GET /api/dashboard/pedidos/status?status=ENTREGUE   (usuário: gerente01)
+{"timestamp":"2026-11-10T02:29:03.553623200Z","status":400,"error":"Error","message":"Valor inválido para o parâmetro 'status': ENTREGUE. Valores aceitos: [RECEBIDO, EM_PREPARACAO, PRONTO, SAIU_PARA_ENTREGA, RETIRADO, FINALIZADO, CANCELADO]","path":"/api/dashboard/pedidos/status"}
+HTTP 400

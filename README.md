@@ -6,6 +6,12 @@ cancelamentos e descontos exclusivos do gerente e auditoria persistente no Mongo
 
 **Tecnologias:** Java 21, Spring Boot 3.4, Spring Security, Thymeleaf e MongoDB.
 
+> **Dashboard Administrativo** (atividade seguinte): indicadores de vendas, gráficos, situação dos pedidos,
+> produtos mais vendidos e filtros, alimentados pela API `GET /api/dashboard/**` (perfis ADMIN e GERENTE).
+> Requisitos, documentação dos endpoints e evidências de testes em **[docs/DASHBOARD.md](docs/DASHBOARD.md)**.
+>
+> 🎥 **Vídeo de apresentação:** [assistir no Google Drive](https://drive.google.com/file/d/1IVK95KdtVgejDCUrBJMFmuWblC3ZSMUw/view?usp=sharing)
+
 ## Como executar
 
 Pré-requisitos: Java 21 e acesso a um MongoDB (Atlas ou local).
@@ -68,6 +74,7 @@ Criados automaticamente na inicialização, caso não existam:
 | Clientes — excluir                        |   ❌   |    ✅    |     ❌     |
 | Produtos — cadastrar, alterar e excluir   |   ❌   |    ✅    |     ❌     |
 | Auditoria — consultar                     |   ✅   |    ✅    |     ❌     |
+| Dashboard administrativo                  |   ✅   |    ✅    |     ❌     |
 
 ### RF02 — Evolução do cadastro de pedidos
 
@@ -163,3 +170,5 @@ fetch('/api/pedidos/ID_DO_PEDIDO/cancelar', {
 - `ClienteServiceTest`: auditoria somente dos campos alterados.
 - `AutorizacaoApiTest`: 401 sem login, 403 por perfil (ATENDENTE/ADMIN cancelando, ADMIN com
   desconto, GERENTE criando usuário), 403 sem token CSRF, senha ausente na API e 405 ao excluir auditoria.
+- `DashboardServiceTest` e `DashboardApiTest`: cálculos, filtros, tratamento de dados e erros da API do
+  dashboard (detalhes em [docs/DASHBOARD.md](docs/DASHBOARD.md#7-evidências-de-testes)).

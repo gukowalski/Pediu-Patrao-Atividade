@@ -1,0 +1,3 @@
+GET /api/dashboard/produtos/mais-vendidos?limite=100   (usuário: gerente01)
+{"timestamp":"2026-11-10T02:29:03.610192400Z","status":400,"error":"Error","message":"O limite deve estar entre 1 e 50","path":"/api/dashboard/produtos/mais-vendidos"}
+HTTP 400

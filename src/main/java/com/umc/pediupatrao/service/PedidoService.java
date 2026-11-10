@@ -181,7 +181,8 @@ public class PedidoService {
                 .setScale(CASAS_DECIMAIS, RoundingMode.HALF_EVEN);
         BigDecimal subtotal = precoUnitario.multiply(BigDecimal.valueOf(dto.getQuantidade()));
 
-        return new ItemPedido(produto.getId(), produto.getNome(), precoUnitario, dto.getQuantidade(), subtotal);
+        return new ItemPedido(produto.getId(), produto.getNome(), precoUnitario, dto.getQuantidade(), subtotal,
+                produto.getTipo());
     }
 
     // Recalcula subtotal, desconto e total; será reaproveitado no desconto do GERENTE (RF04)
