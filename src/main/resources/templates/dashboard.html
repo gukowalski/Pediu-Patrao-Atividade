@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+
+<div th:fragment="content" id="dashboard" class="dashboard pb-5">
+
+    <!-- Cabeçalho + atualização (RF07) -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <div>
+            <h2 class="fw-bold mb-0"><i class="bi bi-speedometer2 me-2 text-primary"></i>Dashboard administrativo</h2>
+            <small class="text-muted" id="db-periodo-texto">Carregando…</small>
+        </div>
+        <div class="d-flex flex-wrap align-items-center gap-3">
+            <small class="text-muted" aria-live="polite">
+                Atualizado em <span id="db-atualizado-em">—</span>
+            </small>
+            <div class="form-check form-switch mb-0">
+                <input class="form-check-input" type="checkbox" role="switch" id="db-auto" checked>
+                <label class="form-check-label small" for="db-auto">Atualizar a cada 60 s</label>
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm" id="db-atualizar">
+                <i class="bi bi-arrow-clockwise"></i> Atualizar
+            </button>
+        </div>
+    </div>
+
+    <!-- Filtros (RF05) -->
+    <form id="db-filtros" class="card shadow-sm mb-3" autocomplete="off">
+        <div class="card-body py-3">
+            <div class="row g-2 align-items-end">
+                <div class="col-6 col-md-4 col-xl">
+                    <label class="form-label small mb-1" for="f-preset">Período</label>
+                    <select class="form-select form-select-sm" id="f-preset">
+                        <option value="0">Hoje</option>
+                        <option value="7">Últimos 7 dias</option>
+                        <option value="30" selected>Últimos 30 dias</option>
+                        <option value="90">Últimos 90 dias</option>
+                        <option value="mes">Este mês</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-4 col-xl">
+                    <label class="form-label small mb-1" for="f-inicio">De</label>
+                    <input type="date" class="form-control form-control-sm" id="f-inicio" name="dataInicio">
+                </div>
+                <div class="col-6 col-md-4 col-xl">
+                    <label class="form-label small mb-1" for="f-fim">Até</label>
+                    <input type="date" class="form-control form-control-sm" id="f-fim" name="dataFim">
+                </div>
+                <div class="col-6 col-md-4 col-xl">
+                    <label class="form-label small mb-1" for="f-tipo">Atendimento</label>
+                    <select class="form-select form-select-sm" id="f-tipo" name="tipoAtendimento">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-4 col-xl">
+                    <label class="form-label small mb-1" for="f-status">Status</label>
+                    <select class="form-select form-select-sm" id="f-status" name="status">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+                <div class="col-6 col-md-4 col-xl">
+                    <label class="form-label small mb-1" for="f-categoria">Categoria</label>
+                    <select class="form-select form-select-sm" id="f-categoria" name="categoria">
+                        <option value="">Todas</option>
+                    </select>
+                </div>
+                <div class="col-12 col-md-4 col-xl-auto d-flex gap-2">
+                    <button type="submit" class="btn btn-primary btn-sm flex-fill">
+                        <i class="bi bi-funnel"></i> Aplicar
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm flex-fill" id="db-limpar">
+                        Limpar
+                    </button>
+                </div>
+            </div>
+            <div class="text-danger small mt-2 d-none" id="db-filtro-erro" role="alert"></div>
+        </div>
+    </form>
+
+    <div class="alert alert-danger d-none" id="db-erro" role="alert"></div>
+
+    <!-- Indicadores gerais (RF01) -->
+    <div class="row g-3 mb-3" id="db-kpis">
+        <div class="col-6 col-lg-4 col-xxl-2" th:each="kpi : ${ {'faturamento','pedidos','ticket','itens','cancelamento','tempo'} }">
+            <div class="card shadow-sm h-100 kpi" th:attr="data-kpi=${kpi}">
+                <div class="card-body">
+                    <div class="kpi-rotulo"></div>
+                    <div class="kpi-valor placeholder-glow"><span class="placeholder col-8"></span></div>
+                    <div class="kpi-delta"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Análise de vendas (RF02) -->
+    <div class="row g-3 mb-3">
+        <div class="col-lg-8">
+            <div class="card shadow-sm h-100" data-bloco="evolucao">
+                <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <div>
+                        <h6 class="mb-0">Faturamento no período</h6>
+                        <small class="text-muted">Pedidos não cancelados, valor com desconto</small>
+                    </div>
+                    <div class="d-flex gap-2 align-items-center">
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Agrupamento">
+                            <input type="radio" class="btn-check" name="agrupamento" id="ag-dia" value="DIA" checked>
+                            <label class="btn btn-outline-secondary" for="ag-dia">Dia</label>
+                            <input type="radio" class="btn-check" name="agrupamento" id="ag-semana" value="SEMANA">
+                            <label class="btn btn-outline-secondary" for="ag-semana">Semana</label>
+                            <input type="radio" class="btn-check" name="agrupamento" id="ag-mes" value="MES">
+                            <label class="btn btn-outline-secondary" for="ag-mes">Mês</label>
+                        </div>
+                        <button type="button" class="btn btn-link btn-sm p-0 db-ver-tabela" data-alvo="faturamento">Ver dados</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="grafico"><canvas id="ch-faturamento" aria-label="Gráfico de faturamento por período" role="img"></canvas></div>
+                    <div class="tabela-dados d-none" data-tabela="faturamento"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100" data-bloco="tipo">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0">Entrega × Retirada</h6>
+                    <small class="text-muted">Participação no número de pedidos</small>
+                </div>
+                <div class="card-body" id="db-tipo"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-lg-8">
+            <div class="card shadow-sm h-100" data-bloco="pedidos">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">Pedidos no período</h6>
+                        <small class="text-muted">Válidos e cancelados, no mesmo agrupamento</small>
+                    </div>
+                    <button type="button" class="btn btn-link btn-sm p-0 db-ver-tabela" data-alvo="pedidos">Ver dados</button>
+                </div>
+                <div class="card-body">
+                    <div class="grafico"><canvas id="ch-pedidos" aria-label="Gráfico de pedidos por período" role="img"></canvas></div>
+                    <div class="tabela-dados d-none" data-tabela="pedidos"></div>
+                </div>
+            </div>
+        </div>
+        <!-- Situação dos pedidos (RF03) -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm h-100" data-bloco="status">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0">Situação dos pedidos</h6>
+                    <small class="text-muted" id="db-status-resumo">&nbsp;</small>
+                </div>
+                <div class="card-body" id="db-status"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-3">
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100" data-bloco="hora">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">Horários de pico</h6>
+                        <small class="text-muted">Pedidos por hora de entrada</small>
+                    </div>
+                    <button type="button" class="btn btn-link btn-sm p-0 db-ver-tabela" data-alvo="hora">Ver dados</button>
+                </div>
+                <div class="card-body">
+                    <div class="grafico grafico-baixo"><canvas id="ch-hora" aria-label="Gráfico de pedidos por hora" role="img"></canvas></div>
+                    <div class="tabela-dados d-none" data-tabela="hora"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100" data-bloco="semana">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="mb-0">Faturamento por dia da semana</h6>
+                        <small class="text-muted">Soma do período filtrado</small>
+                    </div>
+                    <button type="button" class="btn btn-link btn-sm p-0 db-ver-tabela" data-alvo="semana">Ver dados</button>
+                </div>
+                <div class="card-body">
+                    <div class="grafico grafico-baixo"><canvas id="ch-semana" aria-label="Gráfico de faturamento por dia da semana" role="img"></canvas></div>
+                    <div class="tabela-dados d-none" data-tabela="semana"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Produtos mais vendidos (RF04) -->
+    <div class="row g-3 mb-3">
+        <div class="col-lg-7">
+            <div class="card shadow-sm h-100" data-bloco="ranking">
+                <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <div>
+                        <h6 class="mb-0">Produtos mais vendidos</h6>
+                        <small class="text-muted">Top 10 do período</small>
+                    </div>
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Critério do ranking">
+                        <input type="radio" class="btn-check" name="criterio" id="cr-qtd" value="QUANTIDADE" checked>
+                        <label class="btn btn-outline-secondary" for="cr-qtd">Quantidade</label>
+                        <input type="radio" class="btn-check" name="criterio" id="cr-fat" value="FATURAMENTO">
+                        <label class="btn btn-outline-secondary" for="cr-fat">Faturamento</label>
+                    </div>
+                </div>
+                <div class="card-body p-0" id="db-ranking"></div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card shadow-sm h-100" data-bloco="categoria">
+                <div class="card-header bg-white">
+                    <h6 class="mb-0">Vendas por categoria</h6>
+                    <small class="text-muted">Valor dos itens, antes do desconto</small>
+                </div>
+                <div class="card-body" id="db-categoria"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pedidos recentes (RF03) -->
+    <div class="card shadow-sm" data-bloco="recentes">
+        <div class="card-header bg-white">
+            <h6 class="mb-0">Pedidos recentes</h6>
+            <small class="text-muted" id="db-recentes-legenda">&nbsp;</small>
+        </div>
+        <div class="card-body p-0" id="db-recentes"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script th:src="@{/js/dashboard.js}"></script>
+</div>
+
+</body>
+</html>

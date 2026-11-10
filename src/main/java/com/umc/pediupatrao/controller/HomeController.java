@@ -206,6 +206,13 @@ public class HomeController {
         return "redirect:/clientes";
     }
 
+    // Dashboard administrativo: a tela só monta o layout; os dados vêm de /api/dashboard/**
+    @GetMapping("/dashboard")
+    public String dashboard(Model model) {
+        model.addAttribute("content", "dashboard :: content");
+        return "layout";
+    }
+
     @GetMapping("/auditoria")
     public String auditoria(Model model) {
         model.addAttribute("registros", auditoriaService.listar());
