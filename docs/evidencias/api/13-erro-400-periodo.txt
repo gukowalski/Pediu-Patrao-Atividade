@@ -1,0 +1,3 @@
+GET /api/dashboard/resumo?dataInicio=2026-11-09&dataFim=2026-11-01   (usuário: gerente01)
+{"timestamp":"2026-11-10T02:29:03.434406600Z","status":400,"error":"Error","message":"A data inicial não pode ser posterior à data final","path":"/api/dashboard/resumo"}
+HTTP 400

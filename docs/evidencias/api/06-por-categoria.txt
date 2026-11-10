@@ -1,0 +1,3 @@
+GET /api/dashboard/vendas/por-categoria   (usuário: gerente01)
+{"periodo":{"inicio":"2026-10-11","fim":"2026-11-09","dias":30},"faturamentoItens":37307.80,"itens":[{"categoria":"Pizza","quantidade":599,"faturamento":28277.30,"participacao":75.8},{"categoria":"Bebida","quantidade":312,"faturamento":3521.50,"participacao":9.4},{"categoria":"Lanche","quantidade":133,"faturamento":2988.00,"participacao":8.0},{"categoria":"Esfiha","quantidade":363,"faturamento":2297.00,"participacao":6.2},{"categoria":"Sobremesa","quantidade":16,"faturamento":224.00,"participacao":0.6}],"geradoEm":"2026-11-09T23:29:02"}
+HTTP 200

@@ -1,0 +1,3 @@
+GET /api/dashboard/vendas/por-tipo-atendimento   (usuário: gerente01)
+{"periodo":{"inicio":"2026-10-11","fim":"2026-11-09","dias":30},"itens":[{"tipoAtendimento":"ENTREGA","descricao":"Entrega","pedidos":231,"faturamento":23746.00,"ticketMedio":102.80,"participacao":63.1},{"tipoAtendimento":"RETIRADA","descricao":"Retirada","pedidos":135,"faturamento":13279.84,"ticketMedio":98.37,"participacao":36.9}],"geradoEm":"2026-11-09T23:29:03"}
+HTTP 200

@@ -1,0 +1,3 @@
+GET /api/dashboard/resumo?dataInicio=2025-01-01&dataFim=2026-11-09   (usuário: gerente01)
+{"timestamp":"2026-11-10T02:29:03.677357900Z","status":400,"error":"Error","message":"O período consultado não pode ultrapassar 366 dias","path":"/api/dashboard/resumo"}
+HTTP 400

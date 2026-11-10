@@ -1,0 +1,17 @@
+01-filtros                                    HTTP 200
+02-resumo                                     HTTP 200
+03-resumo-filtrado                            HTTP 200
+04-evolucao-semana                            HTTP 200
+05-distribuicao                               HTTP 200
+06-por-categoria                              HTTP 200
+07-por-tipo-atendimento                       HTTP 200
+08-status                                     HTTP 200
+09-recentes                                   HTTP 200
+10-mais-vendidos                              HTTP 200
+11-erro-401-sem-login                         HTTP 401
+12-erro-403-atendente                         HTTP 403
+13-erro-400-periodo                           HTTP 400
+14-erro-400-data-formato                      HTTP 400
+15-erro-400-status                            HTTP 400
+16-erro-400-limite                            HTTP 400
+17-erro-400-intervalo                         HTTP 400
