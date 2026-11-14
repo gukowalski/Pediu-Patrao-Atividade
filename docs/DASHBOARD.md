@@ -11,7 +11,8 @@ de testes do Dashboard Administrativo integrado ao sistema de pedidos **Pediu Pa
 | Consulta ao MongoDB | [`DashboardRepository`](../src/main/java/com/umc/pediupatrao/repository/DashboardRepository.java) |
 | Testes automatizados | [`DashboardServiceTest`](../src/test/java/com/umc/pediupatrao/service/DashboardServiceTest.java), [`DashboardApiTest`](../src/test/java/com/umc/pediupatrao/controller/DashboardApiTest.java) |
 | Evidências | [`docs/evidencias/`](evidencias/) |
-| Branch da implementação | `feature/dashboard-administrativo` → `develop` (gitflow) |
+| Branch da implementação | `feature/dashboard-administrativo` → `develop` → `main` (gitflow) |
+| Vídeo de apresentação | [Google Drive](https://drive.google.com/file/d/1IVK95KdtVgejDCUrBJMFmuWblC3ZSMUw/view?usp=sharing) |
 
 ---
 
@@ -568,16 +569,17 @@ e grava requisição, corpo e status em [`evidencias/api/`](evidencias/api/).
 ## 8. Fluxo de versionamento (gitflow)
 
 ```
-main ─────────────────────────────────────────────── (versão entregue anteriormente)
-  └─ develop ───────────────────────────●──────────── (integração)
-       └─ feature/dashboard-administrativo ─●──●──┘    (implementação da API + tela + docs)
+main ──────────────────────────────────────────────────●── (versão estável)
+  └─ develop ───────────────────────────●──────●───────┘   (integração)
+       └─ feature/dashboard-administrativo ─●──●──┘        (implementação da API + tela + docs)
 ```
 
-- `main`: versão estável (atividade anterior).
+- `main`: versão estável; recebe a `develop` quando a entrega está pronta.
 - `develop`: criada a partir da `main`; recebe as features concluídas.
 - `feature/dashboard-administrativo`: implementação dos endpoints, integração com o MongoDB, tela,
   testes e documentação; integrada na `develop` com `merge --no-ff`.
-- Próximo passo do fluxo: `release/x.y` a partir da `develop` → `main` (com tag) após a avaliação.
+- Entrega: `develop` integrada na `main` com `merge --no-ff`; o pull request `develop → main`
+  registra a entrega no GitHub.
 
 ---
 
